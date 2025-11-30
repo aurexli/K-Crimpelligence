@@ -1,0 +1,167 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Robot Control API",
+    "version": "1.0.0",
+    "description": "HTTP JSON API for controlling a simple robot. Each endpoint returns a structured action list compatible with the Pydantic AI `RobotOutput` schema."
+  },
+  "servers": [{ "url": "http://127.0.0.1:8000" }],
+  "paths": {
+    "/drive": {
+      "post": {
+        "summary": "Drive the robot",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DriveRequest" } } }
+        },
+        "responses": {
+          "200": {
+            "description": "Structured drive action",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DriveActionResponse" } } }
+          }
+        }
+      }
+    },
+    "/turn_left": {
+      "post": {
+        "summary": "Turn the robot left",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TurnRequest" } } }
+        },
+        "responses": {
+          "200": {
+            "description": "Structured turn left action",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TurnLeftActionResponse" } } }
+          }
+        }
+      }
+    },
+    "/turn_right": {
+      "post": {
+        "summary": "Turn the robot right",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TurnRequest" } } }
+        },
+        "responses": {
+          "200": {
+            "description": "Structured turn right action",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TurnRightActionResponse" } } }
+          }
+        }
+      }
+    },
+    "/pause": {
+      "post": {
+        "summary": "Pause the robot",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PauseAction" } } } },
+        "responses": {
+          "200": {
+            "description": "Structured pause action",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PauseActionResponse" } } }
+          }
+        }
+      }
+    },
+    "/follow_line": {
+      "post": {
+        "summary": "Make the robot follow a line",
+        "responses": {
+          "200": {
+            "description": "Structured follow line action",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FollowLineActionResponse" } } }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DriveRequest": {
+        "type": "object",
+        "properties": {
+          "distance": { "type": "number", "format": "float" },
+          "direction": { "type": "string", "enum": ["forward", "backward"] }
+        },
+        "required": ["distance", "direction"]
+      },
+      "TurnRequest": {
+        "type": "object",
+        "properties": { "degrees": { "type": "integer" } },
+        "required": ["degrees"]
+      },
+      "DriveActionResponse": {
+        "type": "object",
+        "properties": {
+          "actions": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/DriveAction" }
+          }
+        }
+      },
+      "TurnLeftActionResponse": {
+        "type": "object",
+        "properties": { "actions": { "type": "array", "items": { "$ref": "#/components/schemas/TurnLeftAction" } } }
+      },
+      "TurnRightActionResponse": {
+        "type": "object",
+        "properties": { "actions": { "type": "array", "items": { "$ref": "#/components/schemas/TurnRightAction" } } }
+      },
+      "PauseActionResponse": {
+        "type": "object",
+        "properties": { "actions": { "type": "array", "items": { "$ref": "#/components/schemas/PauseAction" } } }
+      },
+      "FollowLineActionResponse": {
+        "type": "object",
+        "properties": { "actions": { "type": "array", "items": { "$ref": "#/components/schemas/FollowLineAction" } } }
+      },
+      "DriveAction": {
+        "type": "object",
+        "properties": {
+          "command": { "type": "string", "enum": ["drive"] },
+          "distance": { "type": "number", "format": "float" },
+          "direction": { "type": "string", "enum": ["forward", "backward"] }
+        },
+        "required": ["command", "distance", "direction"]
+      },
+      "TurnLeftAction": {
+        "type": "object",
+        "properties": { "command": { "type": "string", "enum": ["turn_left"] }, "degrees": { "type": "integer" } },
+        "required": ["command", "degrees"]
+      },
+      "TurnRightAction": {
+        "type": "object",
+        "properties": { "command": { "type": "string", "enum": ["turn_right"] }, "degrees": { "type": "integer" } },
+        "required": ["command", "degrees"]
+      },
+      "PauseAction": {
+        "type": "object",
+        "properties": { "command": { "type": "string", "enum": ["pause"] }, "duration": { "type": "number", "format": "float" } },
+        "required": ["command", "duration"]
+      },
+      "FollowLineAction": {
+        "type": "object",
+        "properties": { "command": { "type": "string", "enum": ["follow_line"] } },
+        "required": ["command"]
+      },
+      "SpinRequest": {
+        "type": "object",
+        "properties": { "duration": { "type": "number", "format": "float" } },
+        "required": ["duration"]
+      },
+      "SpinAction": {
+        "type": "object",
+        "properties": {
+          "command": { "type": "string", "enum": ["spin"] },
+          "duration": { "type": "number", "format": "float" }
+        },
+        "required": ["command", "duration"]
+      },
+      "SpinActionResponse": {
+        "type": "object",
+        "properties": { "actions": { "type": "array", "items": { "$ref": "#/components/schemas/SpinAction" } } }
+      }
+    }
+  }
+}
